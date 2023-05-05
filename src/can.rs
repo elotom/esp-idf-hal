@@ -510,7 +510,7 @@ impl<'d> CanDriver<'d> {
             rx_queue_len: config.rx_queue_len,
             alerts_enabled: config.alerts.into(),
             clkout_divider: 0,
-            intr_flags: ESP_INTR_FLAG_LEVEL1 as i32,
+            intr_flags: ESP_INTR_FLAG_LOWMED as i32,
         };
 
         let timing_config = config.timing.into();
