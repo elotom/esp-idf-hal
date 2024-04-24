@@ -758,6 +758,36 @@ impl Frame {
         }
     }
 
+    pub fn new_self(id: u32, extended: bool, data: &[u8]) -> Option<Self> {
+        let dlc = data.len();
+
+        if dlc <= 8 {
+            // unions are not very well supported in rust
+            // therefore setting those union flags is quite hairy
+            let mut flags = twai_message_t__bindgen_ty_1::default();
+
+            // set bits in an union
+            unsafe { flags.__bindgen_anon_1.set_self(1) };
+            if extended {
+                unsafe { flags.__bindgen_anon_1.set_extd(1) };
+            }
+
+            let mut payload = [0; 8];
+            payload[..dlc].copy_from_slice(data);
+
+            let twai_message = twai_message_t {
+                __bindgen_anon_1: flags,
+                identifier: id,
+                data_length_code: dlc as u8,
+                data: payload,
+            };
+
+            Some(Frame(twai_message))
+        } else {
+            None
+        }
+    }
+
     pub fn new_remote(id: u32, extended: bool, dlc: usize) -> Option<Self> {
         if dlc <= 8 {
             // unions are not very well supported in rust
